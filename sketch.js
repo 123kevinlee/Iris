@@ -109,7 +109,6 @@ function songSelected() {
   switch (item) {
     case 'Chopin Op9 No1':
         songFile = 'sounds/chopinop9n1.mp3';
-       
         song = loadSound(songFile);
         break;
       case 'Chopin Fantaisie Impromptu':
