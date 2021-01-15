@@ -1,4 +1,6 @@
-//buttons
+//Kevin Lee
+
+//Elements
 let toggle;
 let saveButton;
 let resetLogButton;
