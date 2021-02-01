@@ -71,7 +71,7 @@ let newSong = false;
 
 function preload() {
   song = loadSound(songFile);
-  song.amp(.5);
+  song.amp(1);
   //load sound and set volume to half
 }
 
@@ -85,8 +85,11 @@ function setup() {
   songSelect = createSelect();
   songSelect.position(50, windowHeight-70);
   songSelect.option('Chopin Op9 No1');
-  songSelect.option('Chopin Fantaisie Impromptu');
+  //songSelect.option('Chopin Fantaisie Impromptu');
   songSelect.option('Harry Potter');
+  songSelect.option('Sir Duke by Stevie Wonder');
+  songSelect.option('La La Land: City of Stars');
+  songSelect.option('Believer by Imagine Dragons');
   songSelect.option('Bflat Note');
   songSelect.selected('Chopin Op9 No1');
   songSelect.changed(songSelected);
@@ -112,18 +115,37 @@ function songSelected() {
     case 'Chopin Op9 No1':
         songFile = 'sounds/chopinop9n1.mp3';
         song = loadSound(songFile);
+        song.amp(1);
         break;
       case 'Chopin Fantaisie Impromptu':
         songFile = 'sounds/chopinfantasie.mp3';
         song = loadSound(songFile);
+        song.amp(1);
         break;
       case 'Harry Potter':
         songFile = 'sounds/hp.mp3';
         song = loadSound(songFile);
+        song.amp(1);
         break;
       case 'Bflat Note':
         songFile = 'sounds/bflat.mp3';
         song = loadSound(songFile);
+        song.amp(1);
+        break;
+      case 'Sir Duke by Stevie Wonder':
+        songFile = 'sounds/sirduke.mp3'
+        song = loadSound(songFile);
+        song.amp(1);
+        break;
+      case 'La La Land: City of Stars':
+        songFile = 'sounds/cityofstars.mp3';
+        song = loadSound(songFile);
+        song.amp(1);
+        break;
+      case 'Believer by Imagine Dragons':
+        songFile = 'sounds/believer.mp3';
+        song = loadSound(songFile);
+        song.amp(1);
         break;
     default:
       break;
@@ -212,8 +234,8 @@ function draw() {
   let noteName;
   if(highAmp != 0){
     noteName = noteKeys[highAmpJ].substring(0, noteKeys[highAmpJ].length - 1) + highAmpI;
-    text(noteName, 150, 150);
-    circle(w * highX - 100, (height - highAmp)*1.25, highAmp/3);
+    //text(noteName, 150, 150);
+    circle(w * highX - 50, (height - highAmp)*1.25, highAmp/3);
   }
   
   let backgroundNotes = '';
@@ -231,11 +253,11 @@ function draw() {
     let colorObject = noteColorObjects[noteKeys[j].substring(0, noteKeys[j].length - 1)];
     let amp = energy[octave][j];
     fill(colorObject[0],colorObject[1],colorObject[2],255-octave*15);
-    circle(w * (octave*12+j) - 100, (height - amp), amp/3);
+    circle(w * (octave*12+j) - 50, (height - amp), amp/3);
   }
 
   fill(255, 155, 0);
-  text(backgroundNotes, 150, 200);
+  //text(backgroundNotes, 150, 200);
 
   if (song.isPlaying()) {
     logPush(highAmpJ, noteName, energy, backgroundNotes, peaks)
