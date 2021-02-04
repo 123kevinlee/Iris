@@ -5,6 +5,11 @@ let togglePlayButton;
 let saveButton;
 let resetLogButton;
 let songSelectDropdown;
+let resetColorButton;
+
+//let colorPicker;
+
+let colorPickers = [];
 
 //p5 objects
 let song;
@@ -29,14 +34,23 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(windowWidth-50, windowHeight-50);
+  createCanvas(windowWidth - 50, windowHeight - 50);
 
-  togglePlayButton = createButton('togglePlayButton');
-  togglePlayButton.html('play');
-  togglePlayButton.mousePressed(togglePlayButtonSound);
+  for (let i = 0; i < 12; i++) {
+    let colorArr = Constants.originalNoteColorObjects[Constants.notes[i]];
+    let colorObj = color(colorArr[0], colorArr[1], colorArr[2]);
+    let colorPicker = createColorPicker(colorObj);
+    colorPicker.position(width * .022, height * .1 + (i * 50));
+    colorPicker.input(changeColorAssocation);
+    colorPickers.push(colorPicker);
+  }
+
+  resetColorButton = createButton('Reset Colors');
+  resetColorButton.mousePressed(resetColors);
+  resetColorButton.position(width * .01, height * .1 + (12 * 50));
 
   songSelectDropdown = createSelect();
-  songSelectDropdown.position(50, windowHeight-70);
+  songSelectDropdown.position(50, height - 20);
   songSelectDropdown.option('Sir Duke by Stevie Wonder');
   songSelectDropdown.option('Chopin Op9 No1');
   //songSelectDropdown.option('Chopin Fantaisie Impromptu');
@@ -46,6 +60,10 @@ function setup() {
   songSelectDropdown.option('Bflat Note');
   songSelectDropdown.selected('Sir Duke by Stevie Wonder');
   songSelectDropdown.changed(songSelectDropdowned);
+
+  togglePlayButton = createButton('togglePlayButton');
+  togglePlayButton.html('play');
+  togglePlayButton.mousePressed(togglePlayButtonSound);
 
   saveButton = createButton('download log');
   saveButton.mousePressed(createLog);
@@ -64,13 +82,18 @@ function setup() {
 
 function draw() {
   noStroke();
-  background(255, 255,255);
+  background(255, 255, 255);
 
   textSize(14);
   fill('black');
-  text('Song:', 5, windowHeight-57);
+  text('Song:', 10, height - 6);
+  //text('C:', width * .01, height * .03 + 18);
 
-  if(song.isLoaded() && newSongLoading){
+  for (let i = 0; i < Constants.notes.length; i++) {
+    text(Constants.notes[i] + ': ', width * .01, height * .1 + (i * 50) + 18)
+  }
+
+  if (song.isLoaded() && newSongLoading) {
     togglePlayButton.html('play');
     togglePlayButton.removeAttribute('disabled');
     newSongLoading = false;
@@ -136,15 +159,15 @@ function draw() {
   //console.log(color);
 
   textSize(64);
-  fill(colorObject[0],colorObject[1],colorObject[2],255-highAmpI*15);
+  fill(colorObject[0], colorObject[1], colorObject[2], 255 - highAmpI * 15);
 
   let noteName;
-  if(highAmp != 0){
+  if (highAmp != 0) {
     noteName = Constants.noteKeys[highAmpJ].substring(0, Constants.noteKeys[highAmpJ].length - 1) + highAmpI;
     text(noteName, 150, 150);
-    circle(w * highX - 50, (height - highAmp)*1.25, highAmp/3);
+    circle(w * highX - 50, (height - highAmp) * 1.25, highAmp / 3);
   }
-  
+
   let backgroundNotes = '';
 
   let peaks = getPeaks(energy, loudestAmp);
@@ -152,15 +175,15 @@ function draw() {
 
   for (let k = 0; k < peaks.length; k++) {
     backgroundNotes += Constants.noteKeys[peaks[k].split('-')[1]].substring(0, Constants.noteKeys[peaks[k].split('-')[1]].length - 1) + peaks[k].split('-')[0] + ' ';
-    
+
     let note = Constants.noteKeys[peaks[k].split('-')[1]].substring(0, Constants.noteKeys[peaks[k].split('-')[1]].length - 1) + peaks[k].split('-')[0];
-    let baseNote = note.substring(0,note.length-1);
-    let octave = note.substring(note.length-1);
+    let baseNote = note.substring(0, note.length - 1);
+    let octave = note.substring(note.length - 1);
     let j = Constants.noteColorOffset[baseNote];
     let colorObject = Constants.noteColorObjects[Constants.noteKeys[j].substring(0, Constants.noteKeys[j].length - 1)];
     let amp = energy[octave][j];
-    fill(colorObject[0],colorObject[1],colorObject[2],255-octave*15);
-    circle(w * (octave*12+j) - 50, (height - amp), amp/3);
+    fill(colorObject[0], colorObject[1], colorObject[2], 255 - octave * 15);
+    circle(w * (octave * 12 + j) - 50, (height - amp), amp / 3);
   }
 
   fill(255, 155, 0);
@@ -183,46 +206,82 @@ function togglePlayButtonSound() {
   }
 }
 
+function changeColorAssocation() {
+  //code here to change the colors file
+  //console.log('here');
+  //Constants.noteColorObjects[Constants.notes[0]] = colorToRGBArray(colorPicker.color());
+  //console.log(Constants.noteColorObjects);
+
+  for (let i = 0; i < colorPickers.length; i++) {
+    Constants.noteColorObjects[Constants.notes[i]] = colorToRGBArray(colorPickers[i].color());
+  }
+}
+
+function resetColors() {
+  for (let i = 0; i < colorPickers.length; i++) {
+    colorPickers[i].remove();
+  }
+  colorPickers = [];
+
+  for (let i = 0; i < 12; i++) {
+    let colorArr = Constants.originalNoteColorObjects[Constants.notes[i]];
+    let colorObj = color(colorArr[0], colorArr[1], colorArr[2]);
+    let colorPicker = createColorPicker(colorObj);
+    colorPicker.position(width * .022, height * .1 + (i * 50));
+    colorPicker.input(changeColorAssocation);
+    colorPickers.push(colorPicker);
+  }
+
+  changeColorAssocation();
+}
+
+function colorToRGBArray(color) {
+  let colorS = color.toString();
+  colorS = colorS.substring(colorS.indexOf('(') + 1, colorS.length - 3);
+  let rgbArray = colorS.split(',').map(Number);;
+  return rgbArray;
+}
+
 //--- Switch songs
 function songSelectDropdowned() {
-  let item =  songSelectDropdown.value();
+  let item = songSelectDropdown.value();
   song.stop();
   switch (item) {
     case 'Chopin Op9 No1':
-        songFile = 'sounds/chopinop9n1.mp3';
-        song = loadSound(songFile);
-        song.amp(1);
-        break;
-      case 'Chopin Fantaisie Impromptu':
-        songFile = 'sounds/chopinfantasie.mp3';
-        song = loadSound(songFile);
-        song.amp(1);
-        break;
-      case 'Harry Potter':
-        songFile = 'sounds/hp.mp3';
-        song = loadSound(songFile);
-        song.amp(1);
-        break;
-      case 'Bflat Note':
-        songFile = 'sounds/bflat.mp3';
-        song = loadSound(songFile);
-        song.amp(1);
-        break;
-      case 'Sir Duke by Stevie Wonder':
-        songFile = 'sounds/sirduke.mp3'
-        song = loadSound(songFile);
-        song.amp(1);
-        break;
-      case 'La La Land: City of Stars':
-        songFile = 'sounds/cityofstars.mp3';
-        song = loadSound(songFile);
-        song.amp(1);
-        break;
-      case 'Believer by Imagine Dragons':
-        songFile = 'sounds/believer.mp3';
-        song = loadSound(songFile);
-        song.amp(1);
-        break;
+      songFile = 'sounds/chopinop9n1.mp3';
+      song = loadSound(songFile);
+      song.amp(1);
+      break;
+    case 'Chopin Fantaisie Impromptu':
+      songFile = 'sounds/chopinfantasie.mp3';
+      song = loadSound(songFile);
+      song.amp(1);
+      break;
+    case 'Harry Potter':
+      songFile = 'sounds/hp.mp3';
+      song = loadSound(songFile);
+      song.amp(1);
+      break;
+    case 'Bflat Note':
+      songFile = 'sounds/bflat.mp3';
+      song = loadSound(songFile);
+      song.amp(1);
+      break;
+    case 'Sir Duke by Stevie Wonder':
+      songFile = 'sounds/sirduke.mp3'
+      song = loadSound(songFile);
+      song.amp(1);
+      break;
+    case 'La La Land: City of Stars':
+      songFile = 'sounds/cityofstars.mp3';
+      song = loadSound(songFile);
+      song.amp(1);
+      break;
+    case 'Believer by Imagine Dragons':
+      songFile = 'sounds/believer.mp3';
+      song = loadSound(songFile);
+      song.amp(1);
+      break;
     default:
       break;
   }
@@ -325,4 +384,3 @@ function logPush(noteIndex, note, energy, backgroundNotes, peaks) {
     //--- wierd undefined bug that doesn't seem to cause any issues
   }
 }
-
