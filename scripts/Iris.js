@@ -15,7 +15,7 @@ let peakDetectFft;
 let peakDetect;
 let mic;
 
-let songFile = 'sounds/sirduke.mp3';
+let songFile = 'songs/sirduke.mp3';
 let smoothingValue = .9;
 let bins = 4096;
 let peakThreshold = .001;
@@ -53,6 +53,7 @@ function setup() {
   //songSelectDropdown.option('Chopin Fantaisie Impromptu');
   songSelectDropdown.option('Harry Potter');
   songSelectDropdown.option('La La Land: City of Stars');
+  songSelectDropdown.option('La La Land: Mia and Sebestian\'s Theme');
   songSelectDropdown.option('Believer by Imagine Dragons');
   songSelectDropdown.option('Bflat Note');
   songSelectDropdown.selected('Sir Duke by Stevie Wonder');
@@ -161,7 +162,7 @@ function draw() {
   let noteName;
   if (highAmp != 0) {
     noteName = Constants.noteKeys[highAmpJ].substring(0, Constants.noteKeys[highAmpJ].length - 1) + highAmpI;
-    text(noteName, 150, 150);
+    //text(noteName, 150, 150);
     circle(w * highX - 50, (height - highAmp) * 1.25, highAmp / 3);
   }
 
@@ -184,7 +185,7 @@ function draw() {
   }
 
   fill(255, 155, 0);
-  text(backgroundNotes, 150, 200);
+  //text(backgroundNotes, 150, 200);
 
   if (song.isPlaying()) {
     logPush(highAmpJ, noteName, energy, backgroundNotes, peaks)
@@ -240,37 +241,42 @@ function songSelectDropdowned() {
   song.stop();
   switch (item) {
     case 'Chopin Op9 No1':
-      songFile = 'sounds/chopinop9n1.mp3';
+      songFile = 'songs/chopinop9n1.mp3';
       song = loadSound(songFile);
       song.amp(1);
       break;
     case 'Chopin Fantaisie Impromptu':
-      songFile = 'sounds/chopinfantasie.mp3';
+      songFile = 'songs/chopinfantasie.mp3';
       song = loadSound(songFile);
       song.amp(1);
       break;
     case 'Harry Potter':
-      songFile = 'sounds/hp.mp3';
+      songFile = 'songs/hp.mp3';
       song = loadSound(songFile);
       song.amp(1);
       break;
     case 'Bflat Note':
-      songFile = 'sounds/bflat.mp3';
+      songFile = 'songs/bflat.mp3';
       song = loadSound(songFile);
       song.amp(1);
       break;
     case 'Sir Duke by Stevie Wonder':
-      songFile = 'sounds/sirduke.mp3'
+      songFile = 'songs/sirduke.mp3'
       song = loadSound(songFile);
       song.amp(1);
       break;
     case 'La La Land: City of Stars':
-      songFile = 'sounds/cityofstars.mp3';
+      songFile = 'songs/cityofstars.mp3';
+      song = loadSound(songFile);
+      song.amp(1);
+      break;
+    case 'La La Land: Mia and Sebestian\'s Theme':
+      songFile = 'songs/mstheme.mp3';
       song = loadSound(songFile);
       song.amp(1);
       break;
     case 'Believer by Imagine Dragons':
-      songFile = 'sounds/believer.mp3';
+      songFile = 'songs/believer.mp3';
       song = loadSound(songFile);
       song.amp(1);
       break;
