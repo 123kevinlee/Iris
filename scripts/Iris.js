@@ -110,7 +110,9 @@ function draw() {
   //fill(255, 255, 255);
   //ellipse(width / 2, height / 2, ellipseWidth, ellipseWidth);
 
-  let energy = analyzeNotes();
+  let ap = new AudioProcessing(fft);
+  let energy = ap.analyzeNotes();
+  //let energy = analyzeNotes();
   //console.table(energy);
   //console.log(songTime);
 
@@ -168,7 +170,8 @@ function draw() {
 
   let backgroundNotes = '';
 
-  let peaks = getPeaks(energy, loudestAmp);
+  //let peaks = getPeaks(energy, loudestAmp);
+  let peaks = ap.getPeaks(loudestAmp);
   //console.log(peaks);
 
   for (let k = 0; k < peaks.length; k++) {
@@ -288,44 +291,44 @@ function songSelectDropdowned() {
   newSongLoading = true;
 }
 
-//--- returns a 2D array with the amplitude of each note frequency in each octave
-function analyzeNotes() {
-  let octaves = 8; //--- 8 octaves on a piano
-  let final = [];
-  for (let i = 0; i <= octaves; i++) {
-    var temp = [];
-    for (let j = 0; j < Constants.noteKeys.length; j++) {
-      temp.push(fft.getEnergy(getOctaveFrequency(Constants.noteFrequencies[Constants.noteKeys[j]], i)));
-    }
-    final.push(temp);
-  }
-  return final;
-}
+// //--- returns a 2D array with the amplitude of each note frequency in each octave
+// function analyzeNotes() {
+//   let octaves = 8; //--- 8 octaves on a piano
+//   let final = [];
+//   for (let i = 0; i <= octaves; i++) {
+//     var temp = [];
+//     for (let j = 0; j < Constants.noteKeys.length; j++) {
+//       temp.push(fft.getEnergy(getOctaveFrequency(Constants.noteFrequencies[Constants.noteKeys[j]], i)));
+//     }
+//     final.push(temp);
+//   }
+//   return final;
+// }
 
-//--- returns frequency of note in a set octave -- note frequencies increase by a factor of 2 each octave
-function getOctaveFrequency(baseFreq, octave) {
-  return baseFreq * (Math.pow(2, octave));
-}
+// //--- returns frequency of note in a set octave -- note frequencies increase by a factor of 2 each octave
+// function getOctaveFrequency(baseFreq, octave) {
+//   return baseFreq * (Math.pow(2, octave));
+// }
 
-function getPeaks(energy, amp) {
-  let peaks = [];
-  let filter = amp * .5;
+// function getPeaks(energy, amp) {
+//   let peaks = [];
+//   let filter = amp * .5;
 
-  for (let i = 0; i < energy.length; i++) {
-    for (let j = 0; j < energy[i].length; j++) {
-      let before = j > 0 ? j - 1 : null;
-      let after = j < energy[i].length - 1 ? j + 1 : null;
-      if (before != null && after != null) {
-        if (energy[i][before] < energy[i][j] && energy[i][j] < energy[i][after] && energy[i][j] > filter) {
-          peaks.push(i + '-' + (j + 1));
-          //console.log(energy[i][j]);
-        }
-      }
-    }
-  }
+//   for (let i = 0; i < energy.length; i++) {
+//     for (let j = 0; j < energy[i].length; j++) {
+//       let before = j > 0 ? j - 1 : null;
+//       let after = j < energy[i].length - 1 ? j + 1 : null;
+//       if (before != null && after != null) {
+//         if (energy[i][before] < energy[i][j] && energy[i][j] < energy[i][after] && energy[i][j] > filter) {
+//           peaks.push(i + '-' + (j + 1));
+//           //console.log(energy[i][j]);
+//         }
+//       }
+//     }
+//   }
 
-  return peaks;
-}
+//   return peaks;
+// }
 
 function logSetup() {
   log += 'File: ' + songFile.substring(songFile.indexOf('/') + 1, songFile.indexOf('.')) + '\n';
