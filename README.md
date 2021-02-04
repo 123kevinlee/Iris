@@ -1,3 +1,4 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 # Iris
 ![Image](https://i.imgur.com/SnJY40i.png)
 
@@ -7,6 +8,7 @@
 The goal of the project was to create a program that utilizes audio signal analysis to authentically convey music through colors, shapes, and animation.
 
 [Visit Iris](https://123kevinlee.github.io/Iris/)
+[Video Log](https://www.youtube.com/playlist?list=PLZmXYwjnKkghav1sL_TDiplvvdANFS714)
 
 ## Built With
 * [p5.js](https://p5js.org/) - Javascript library for creative coding
