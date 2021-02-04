@@ -20,6 +20,7 @@ let smoothingValue = .9;
 let bins = 4096;
 let peakThreshold = .001;
 let log;
+let logObj;
 
 let ellipseWidth = 100;
 
@@ -31,13 +32,16 @@ function preload() {
 }
 
 function setup() {
+  logSetup();
+  //logObj = new Logger(songFile, bins, smoothingValue);
+
   createCanvas(windowWidth - 50, windowHeight - 50);
 
   for (let i = 0; i < 12; i++) {
     let colorArr = Constants.originalNoteColorObjects[Constants.notes[i]];
     let colorObj = color(colorArr[0], colorArr[1], colorArr[2]);
     let colorPicker = createColorPicker(colorObj);
-    colorPicker.position(width * .022, height * .1 + (i * 50));
+    colorPicker.position(width * .023, height * .1 + (i * 50));
     colorPicker.input(changeColorAssocation);
     colorPickers.push(colorPicker);
   }
@@ -68,8 +72,7 @@ function setup() {
 
   resetLogButton = createButton('reset log');
   resetLogButton.mousePressed(resetLog);
-
-  logSetup();
+  //resetLogButton.mousePressed(logObj.resetLog);
 
   //mic = new p5.AudioIn();
   //mic.start();
@@ -191,7 +194,8 @@ function draw() {
   //text(backgroundNotes, 150, 200);
 
   if (song.isPlaying()) {
-    logPush(highAmpJ, noteName, energy, backgroundNotes, peaks)
+    logPush(highAmpJ, noteName, energy, backgroundNotes, peaks);
+    //logObj.logPush(highAmpJ, noteName, energy,backgroundNotes, peaks);
   }
 }
 
@@ -200,6 +204,7 @@ function togglePlayButtonSound() {
   if (song.isPlaying()) {
     song.pause();
     log += 'break\n\n';
+    //logObj.logAdd('break\n\n');
     togglePlayButton.html('play');
   } else {
     song.play();
@@ -342,6 +347,12 @@ function resetLog() {
 }
 
 function createLog() {
+  //  let logBody = logObj.getLogBody();
+  //  logBody = logBody.replace('undefined','');
+  //  let fileWriter = createWriter('log.txt');
+  //  fileWriter.write(logBody);
+  //  fileWriter.close();
+
   log = log.replace('undefined', '');
   let fileWriter = createWriter('log.txt');
   fileWriter.write(log);
