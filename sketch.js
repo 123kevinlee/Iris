@@ -1,4 +1,4 @@
-//Kevin Lee
+//Kevin Lee - Research Project - 2021
 
 //HTML Elements
 let togglePlayButton;
@@ -6,9 +6,6 @@ let saveButton;
 let resetLogButton;
 let songSelectDropdown;
 let resetColorButton;
-
-//let colorPicker;
-
 let colorPickers = [];
 
 //p5 objects
@@ -207,11 +204,6 @@ function togglePlayButtonSound() {
 }
 
 function changeColorAssocation() {
-  //code here to change the colors file
-  //console.log('here');
-  //Constants.noteColorObjects[Constants.notes[0]] = colorToRGBArray(colorPicker.color());
-  //console.log(Constants.noteColorObjects);
-
   for (let i = 0; i < colorPickers.length; i++) {
     Constants.noteColorObjects[Constants.notes[i]] = colorToRGBArray(colorPickers[i].color());
   }
