@@ -1,5 +1,4 @@
 //Kevin Lee - Research Project - 2021
-//test connection
 
 //HTML Elements
 let togglePlayButton;
