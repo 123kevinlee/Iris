@@ -11,20 +11,18 @@ let colorPickers = [];
 //p5 objects
 let song;
 let fft;
-let peakDetectFft;
 let peakDetect;
 let mic;
 
 let songFile = 'songs/sirduke.mp3';
 let smoothingValue = .9;
 let bins = 4096;
-let peakThreshold = .001;
-let log;
-let logObj;
-
-let ellipseWidth = 100;
-
+//let peakThreshold = .001;
+let logger;
 let newSongLoading = false;
+
+//variable for beat detection ellipse
+let ellipseWidth = 100;
 
 function preload() {
   song = loadSound(songFile);
@@ -32,11 +30,12 @@ function preload() {
 }
 
 function setup() {
-  logSetup();
-  //logObj = new Logger(songFile, bins, smoothingValue);
+  //instantiate logging object
+  logger = new Logger(songFile, bins, smoothingValue);
 
   createCanvas(windowWidth - 50, windowHeight - 50);
 
+  //creates the color pickers
   for (let i = 0; i < 12; i++) {
     let colorArr = Constants.originalNoteColorObjects[Constants.notes[i]];
     let colorObj = color(colorArr[0], colorArr[1], colorArr[2]);
@@ -68,16 +67,17 @@ function setup() {
   togglePlayButton.mousePressed(togglePlayButtonSound);
 
   saveButton = createButton('download log');
-  saveButton.mousePressed(createLog);
+  saveButton.mousePressed(() => logger.createLog());
 
   resetLogButton = createButton('reset log');
-  resetLogButton.mousePressed(resetLog);
-  //resetLogButton.mousePressed(logObj.resetLog);
+  resetLogButton.mousePressed(() => logger.resetLog());
 
+  fft = new p5.FFT(smoothingValue, bins);
+  //peakDetect = new p5.PeakDetect(20, 20000, peakThreshold, 20);
+
+  //mic stuff
   //mic = new p5.AudioIn();
   //mic.start();
-  fft = new p5.FFT(smoothingValue, bins);
-  peakDetect = new p5.PeakDetect(20, 20000, peakThreshold, 20);
   //fft.setInput(mic);
 }
 
@@ -88,41 +88,41 @@ function draw() {
   textSize(14);
   fill('black');
   text('Song:', 10, height - 6);
-  //text('C:', width * .01, height * .03 + 18);
 
+  //Note names for color pickers
   for (let i = 0; i < Constants.notes.length; i++) {
     text(Constants.notes[i] + ': ', width * .01, height * .1 + (i * 50) + 18)
   }
 
+  //waits until song is loaded
   if (song.isLoaded() && newSongLoading) {
     togglePlayButton.html('play');
     togglePlayButton.removeAttribute('disabled');
     newSongLoading = false;
+  } else if (!song.isPlaying()) {
+    togglePlayButton.html('play');
   }
 
   fft.analyze();
-  peakDetect.update(fft);
 
+  //beat detection ellipse stuff
+  //peakDetect.update(fft);
   //console.log(peakDetect.isDetected);
-  if (peakDetect.isDetected) {
-    ellipseWidth = 500;
-  } else {
-    ellipseWidth *= 0.95;
-  }
-
+  //if (peakDetect.isDetected) {
+  //  ellipseWidth = 500;
+  //} else {
+  //  ellipseWidth *= 0.95;
+  //}
   //fill(255, 255, 255);
   //ellipse(width / 2, height / 2, ellipseWidth, ellipseWidth);
 
   let ap = new AudioProcessing(fft);
   let energy = ap.analyzeNotes();
-  //let energy = analyzeNotes();
-  //console.table(energy);
-  //console.log(songTime);
 
   let highAmpI = 0; //--- i = octaves
   let highAmpJ = 0; //--- j = notes in octave
   let highX = 0; //--- x = position of highest note
-  let highAmp = 0; //highest amp
+  let highAmp = 0; //--- highest amp
 
   let w = width / (energy.length * energy[0].length);
 
@@ -147,44 +147,36 @@ function draw() {
           highAmp = ampH;
         }
       }
-
-      //--- create linear graph of amplitudes with note domain
       count++;
-      //fill(i * 30 + 30, i * 30 + 30, i * 30 + 30);
-      //noStroke();
-      //rect(w * count, height - ampH, w - 5, ampH);
     }
   }
 
   let loudestAmp = energy[highAmpI][highAmpJ];
 
-  let colorObject = Constants.noteColorObjects[Constants.noteKeys[highAmpJ].substring(0, Constants.noteKeys[highAmpJ].length - 1)];
-  //console.log(color);
+  let colorObject = Constants.noteColorObjects[Constants.notes[highAmpJ]];
 
   textSize(64);
   fill(colorObject[0], colorObject[1], colorObject[2], 255 - highAmpI * 15);
 
   let noteName;
   if (highAmp != 0) {
-    noteName = Constants.noteKeys[highAmpJ].substring(0, Constants.noteKeys[highAmpJ].length - 1) + highAmpI;
+    noteName = Constants.notes[highAmpJ] + highAmpI;
     //text(noteName, 150, 150);
     circle(w * highX - 50, (height - highAmp) * 1.25, highAmp / 3);
   }
 
   let backgroundNotes = '';
 
-  //let peaks = getPeaks(energy, loudestAmp);
   let peaks = ap.getPeaks(loudestAmp);
-  //console.log(peaks);
 
   for (let k = 0; k < peaks.length; k++) {
-    backgroundNotes += Constants.noteKeys[peaks[k].split('-')[1]].substring(0, Constants.noteKeys[peaks[k].split('-')[1]].length - 1) + peaks[k].split('-')[0] + ' ';
+    backgroundNotes += Constants.notes[peaks[k].split('-')[1]] + peaks[k].split('-')[0] + ' ';
 
-    let note = Constants.noteKeys[peaks[k].split('-')[1]].substring(0, Constants.noteKeys[peaks[k].split('-')[1]].length - 1) + peaks[k].split('-')[0];
+    let note = Constants.notes[peaks[k].split('-')[1]] + peaks[k].split('-')[0];
     let baseNote = note.substring(0, note.length - 1);
     let octave = note.substring(note.length - 1);
     let j = Constants.noteColorOffset[baseNote];
-    let colorObject = Constants.noteColorObjects[Constants.noteKeys[j].substring(0, Constants.noteKeys[j].length - 1)];
+    let colorObject = Constants.noteColorObjects[Constants.notes[j]];
     let amp = energy[octave][j];
     fill(colorObject[0], colorObject[1], colorObject[2], 255 - octave * 15);
     circle(w * (octave * 12 + j) - 50, (height - amp), amp / 3);
@@ -193,9 +185,9 @@ function draw() {
   fill(255, 155, 0);
   //text(backgroundNotes, 150, 200);
 
+  //logs fft values if there is a song playing
   if (song.isPlaying()) {
-    logPush(highAmpJ, noteName, energy, backgroundNotes, peaks);
-    //logObj.logPush(highAmpJ, noteName, energy,backgroundNotes, peaks);
+    logger.logPush(highAmpJ, noteName, energy, backgroundNotes, peaks);
   }
 }
 
@@ -203,8 +195,7 @@ function draw() {
 function togglePlayButtonSound() {
   if (song.isPlaying()) {
     song.pause();
-    log += 'break\n\n';
-    //logObj.logAdd('break\n\n');
+    logger.logAdd('break\n\n');
     togglePlayButton.html('play');
   } else {
     song.play();
@@ -212,16 +203,13 @@ function togglePlayButtonSound() {
   }
 }
 
-function changeColorAssocation() {
-  for (let i = 0; i < colorPickers.length; i++) {
-    Constants.noteColorObjects[Constants.notes[i]] = colorToRGBArray(colorPickers[i].color());
-  }
-}
-
+//resets color association to default
 function resetColors() {
+  //removes existing color pickers from the dom
   for (let i = 0; i < colorPickers.length; i++) {
     colorPickers[i].remove();
   }
+
   colorPickers = [];
 
   for (let i = 0; i < 12; i++) {
@@ -236,6 +224,14 @@ function resetColors() {
   changeColorAssocation();
 }
 
+//updates color association to chosen colors in color pickers
+function changeColorAssocation() {
+  for (let i = 0; i < colorPickers.length; i++) {
+    Constants.noteColorObjects[Constants.notes[i]] = colorToRGBArray(colorPickers[i].color());
+  }
+}
+
+//converts color object to rgb int array
 function colorToRGBArray(color) {
   let colorS = color.toString();
   colorS = colorS.substring(colorS.indexOf('(') + 1, colorS.length - 3);
@@ -250,149 +246,38 @@ function songSelectDropdowned() {
   switch (item) {
     case 'Chopin Op9 No1':
       songFile = 'songs/chopinop9n1.mp3';
-      song = loadSound(songFile);
-      song.amp(1);
       break;
     case 'Chopin Fantaisie Impromptu':
       songFile = 'songs/chopinfantasie.mp3';
-      song = loadSound(songFile);
-      song.amp(1);
       break;
     case 'Harry Potter':
       songFile = 'songs/hp.mp3';
-      song = loadSound(songFile);
-      song.amp(1);
       break;
     case 'Bflat Note':
       songFile = 'songs/bflat.mp3';
-      song = loadSound(songFile);
-      song.amp(1);
       break;
     case 'Sir Duke by Stevie Wonder':
       songFile = 'songs/sirduke.mp3'
-      song = loadSound(songFile);
-      song.amp(1);
       break;
     case 'La La Land: City of Stars':
       songFile = 'songs/cityofstars.mp3';
-      song = loadSound(songFile);
-      song.amp(1);
       break;
     case 'La La Land: Mia and Sebestian\'s Theme':
       songFile = 'songs/mstheme.mp3';
-      song = loadSound(songFile);
-      song.amp(1);
       break;
     case 'Believer by Imagine Dragons':
       songFile = 'songs/believer.mp3';
-      song = loadSound(songFile);
-      song.amp(1);
       break;
     default:
       break;
   }
+
+  song = loadSound(songFile);
+  song.amp(1);
+  logger = new Logger(songFile, bins, smoothingValue);
+
+  //disables play button until the song is loaded
   togglePlayButton.attribute('disabled', '');
   togglePlayButton.html('loading...');
   newSongLoading = true;
-}
-
-// //--- returns a 2D array with the amplitude of each note frequency in each octave
-// function analyzeNotes() {
-//   let octaves = 8; //--- 8 octaves on a piano
-//   let final = [];
-//   for (let i = 0; i <= octaves; i++) {
-//     var temp = [];
-//     for (let j = 0; j < Constants.noteKeys.length; j++) {
-//       temp.push(fft.getEnergy(getOctaveFrequency(Constants.noteFrequencies[Constants.noteKeys[j]], i)));
-//     }
-//     final.push(temp);
-//   }
-//   return final;
-// }
-
-// //--- returns frequency of note in a set octave -- note frequencies increase by a factor of 2 each octave
-// function getOctaveFrequency(baseFreq, octave) {
-//   return baseFreq * (Math.pow(2, octave));
-// }
-
-// function getPeaks(energy, amp) {
-//   let peaks = [];
-//   let filter = amp * .5;
-
-//   for (let i = 0; i < energy.length; i++) {
-//     for (let j = 0; j < energy[i].length; j++) {
-//       let before = j > 0 ? j - 1 : null;
-//       let after = j < energy[i].length - 1 ? j + 1 : null;
-//       if (before != null && after != null) {
-//         if (energy[i][before] < energy[i][j] && energy[i][j] < energy[i][after] && energy[i][j] > filter) {
-//           peaks.push(i + '-' + (j + 1));
-//           //console.log(energy[i][j]);
-//         }
-//       }
-//     }
-//   }
-
-//   return peaks;
-// }
-
-function logSetup() {
-  log += 'File: ' + songFile.substring(songFile.indexOf('/') + 1, songFile.indexOf('.')) + '\n';
-  log += 'Bin Size: ' + bins + '\n';
-  log += 'Smoothing Value: ' + smoothingValue + '\n\n';
-}
-
-function resetLog() {
-  log = '';
-  logSetup();
-}
-
-function createLog() {
-  //  let logBody = logObj.getLogBody();
-  //  logBody = logBody.replace('undefined','');
-  //  let fileWriter = createWriter('log.txt');
-  //  fileWriter.write(logBody);
-  //  fileWriter.close();
-
-  log = log.replace('undefined', '');
-  let fileWriter = createWriter('log.txt');
-  fileWriter.write(log);
-  fileWriter.close();
-}
-
-let previousTime = -125;
-
-function logPush(noteIndex, note, energy, backgroundNotes, peaks) {
-  try {
-    function write() {
-      log += `${timestamp}: ${note}[${noteIndex}]\n`;
-      log += `Background: ${backgroundNotes}\n`;
-      log += `Peaks: ${peaks}\n`;
-      for (let i = 0; i <= energy.length; i++) {
-        log += `    ${i} - ${energy[i].toString()}\n`;
-      }
-      log += '\n\n';
-    }
-
-    let date = new Date();
-    let milliseconds = date.getMilliseconds();
-    let seconds = date.getSeconds();
-    let minutes = date.getMinutes();
-    let hour = date.getHours();
-
-    let timestamp = `${hour}:${minutes}:${seconds}:${milliseconds}`;
-
-    if (previousTime == 0) {
-      previousTime = milliseconds;
-    } else if (milliseconds > previousTime && milliseconds - previousTime > 125) {
-      previousTime = milliseconds;
-      write();
-
-    } else if (milliseconds < previousTime && (1000 - previousTime) + milliseconds > 125) {
-      previousTime = milliseconds;
-      write();
-    }
-  } catch (e) {
-    //console.log(e);
-    //--- wierd undefined bug that doesn't seem to cause any issues
-  }
 }
