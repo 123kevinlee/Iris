@@ -1,7 +1,5 @@
 //Kevin Lee - Research Project - 2021
 
-//test new branch
-
 //HTML Elements
 let togglePlayButton;
 let saveButton;
