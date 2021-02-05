@@ -1,4 +1,4 @@
-class Constants{}
+class Constants {}
 
 Constants.noteFrequencies = {
   'c0': 16.35,
@@ -26,7 +26,7 @@ Constants.originalNoteColorObjects = {
   'f': [94, 5, 252],
   'f#': [207, 1, 241],
   'g': [11, 0, 10],
-  'a♭':[100, 2, 1],
+  'a♭': [100, 2, 1],
   'a': [248, 5, 14],
   'b♭': [242, 56, 19],
   'b': [241, 103, 28]
@@ -41,7 +41,7 @@ Constants.noteColorObjects = {
   'f': [94, 5, 252],
   'f#': [207, 1, 241],
   'g': [11, 0, 10],
-  'a♭':[100, 2, 1],
+  'a♭': [100, 2, 1],
   'a': [248, 5, 14],
   'b♭': [242, 56, 19],
   'b': [241, 103, 28]
@@ -56,10 +56,10 @@ Constants.noteColorOffset = {
   'f': 5,
   'f#': 6,
   'g': 7,
-  'a♭':8,
+  'a♭': 8,
   'a': 9,
   'b♭': 10,
   'b': 11
-}  
+}
 
 Constants.notes = Object.keys(Constants.noteColorObjects);
