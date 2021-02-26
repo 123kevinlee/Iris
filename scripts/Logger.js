@@ -9,6 +9,7 @@ class Logger {
     this.logSetup();
   }
 
+  //creates new blank log
   resetLog() {
     this.logBody = '';
     this.logSetup();
@@ -20,10 +21,12 @@ class Logger {
     this.logBody += 'Smoothing Value: ' + this.smoothingValue + '\n\n';
   }
 
+  //adds single string to the log
   logAdd(string) {
     this.logBody += string;
   }
 
+  //adds new log entry
   logPush(noteIndex, note, energy, backgroundNotes, peaks) {
     let date = new Date();
     let milliseconds = date.getMilliseconds();
@@ -59,10 +62,12 @@ class Logger {
     }
   }
 
+  //returns log
   getLogBody() {
     return this.logBody;
   }
 
+  //downloads log
   createLog() {
     let logBody = this.logBody;
     logBody = logBody.replace('undefined', '');

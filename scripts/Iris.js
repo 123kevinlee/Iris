@@ -45,10 +45,12 @@ function setup() {
     colorPickers.push(colorPicker);
   }
 
+  //creates Reset Colors button
   resetColorButton = createButton('Reset Colors');
   resetColorButton.mousePressed(resetColors);
   resetColorButton.position(width * .01, height * .1 + (12 * 50));
 
+  //creates song selection dropodown
   songSelectDropdown = createSelect();
   songSelectDropdown.position(50, height - 20);
   songSelectDropdown.option('Sir Duke by Stevie Wonder');
@@ -62,17 +64,22 @@ function setup() {
   songSelectDropdown.selected('Sir Duke by Stevie Wonder');
   songSelectDropdown.changed(songSelectDropdowned);
 
+  //creates play/pause button
   togglePlayButton = createButton('togglePlayButton');
   togglePlayButton.html('play');
   togglePlayButton.mousePressed(togglePlayButtonSound);
 
+  //creates download log button
   saveButton = createButton('download log');
   saveButton.mousePressed(() => logger.createLog());
 
+  //creates reset log button
   resetLogButton = createButton('reset log');
   resetLogButton.mousePressed(() => logger.resetLog());
 
+  //initialize FFT object
   fft = new p5.FFT(smoothingValue, bins);
+
   //peakDetect = new p5.PeakDetect(20, 20000, peakThreshold, 20);
 
   //mic stuff
@@ -89,12 +96,12 @@ function draw() {
   fill('black');
   text('Song:', 10, height - 6);
 
-  //Note names for color pickers
+  //Displays note names for color pickers
   for (let i = 0; i < Constants.notes.length; i++) {
     text(Constants.notes[i] + ': ', width * .01, height * .1 + (i * 50) + 18)
   }
 
-  //waits until song is loaded
+  //waits until song is loaded before allowing interaction
   if (song.isLoaded() && newSongLoading) {
     togglePlayButton.html('play');
     togglePlayButton.removeAttribute('disabled');
@@ -103,27 +110,33 @@ function draw() {
     togglePlayButton.html('play');
   }
 
-  fft.analyze();
+
+  fft.analyze(); //fft analyze current moment in song
 
   let ap = new AudioProcessing(fft);
-  let energy = ap.analyzeNotes();
-  let distinctNotes = ap.getDistinctNotes();
+  let energy = ap.analyzeNotes(); //get amplitudes of chromatic notes
+  let distinctNotes = ap.getDistinctNotes(); //get distinct notes
 
   let distinctNotesS = '';
-  let w = width / (energy.length * energy[0].length);
+  let w = width / (energy.length * energy[0].length); //get note position x intervals
   for (let i = 0; i < distinctNotes.length; i++) {
     distinctNotesS += Constants.notes[distinctNotes[i][1]] + distinctNotes[i][0];
 
+    //get note name
     let note = Constants.notes[distinctNotes[i][1]] + distinctNotes[i][0];
     let baseNote = note.substring(0, note.length - 1);
     let octave = note.substring(note.length - 1);
 
+    //get color and position variables
     let colorObject = Constants.noteColorObjects[baseNote];
     let j = Constants.noteColorOffset[baseNote];
     let amp = energy[octave][j];
 
+    //map position variables to position
     let h = map(amp, 0, 255, height, 0);
     let r = map(amp, 0, 255, 0, 140);
+
+    //create circle for note
     fill(colorObject[0], colorObject[1], colorObject[2], 255 - octave * 15);
     circle(w * (octave * 12 + j) - 50, h, r);
   }

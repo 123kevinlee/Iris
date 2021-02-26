@@ -4,6 +4,7 @@ class AudioProcessing {
     this.energy = [];
   }
 
+  //returns array of amplitudes for chromatic notes
   analyzeNotes() {
     let octaves = 8; //--- 8 octaves on a piano
     let final = [];
@@ -18,10 +19,12 @@ class AudioProcessing {
     return final;
   }
 
+  //returns frequencies for notes above octave 0
   getOctaveFrequency(baseFreq, octave) {
     return baseFreq * (Math.pow(2, octave));
   }
 
+  //returns array of distinct notes
   getDistinctNotes() {
     let energy = this.energy;
     let distinctNotes = [];

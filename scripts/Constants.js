@@ -47,6 +47,7 @@ Constants.noteColorObjects = {
   'b': [241, 103, 28]
 }
 
+//get index for energy array from pitch
 Constants.noteColorOffset = {
   'c': 0,
   'c♯': 1,
