@@ -105,89 +105,32 @@ function draw() {
 
   fft.analyze();
 
-  //beat detection ellipse stuff
-  //peakDetect.update(fft);
-  //console.log(peakDetect.isDetected);
-  //if (peakDetect.isDetected) {
-  //  ellipseWidth = 500;
-  //} else {
-  //  ellipseWidth *= 0.95;
-  //}
-  //fill(255, 255, 255);
-  //ellipse(width / 2, height / 2, ellipseWidth, ellipseWidth);
-
   let ap = new AudioProcessing(fft);
   let energy = ap.analyzeNotes();
+  let distinctNotes = ap.getDistinctNotes();
 
-  let highAmpI = 0; //--- i = octaves
-  let highAmpJ = 0; //--- j = notes in octave
-  let highX = 0; //--- x = position of highest note
-  let highAmp = 0; //--- highest amp
-
+  let distinctNotesS = '';
   let w = width / (energy.length * energy[0].length);
+  for (let i = 0; i < distinctNotes.length; i++) {
+    distinctNotesS += Constants.notes[distinctNotes[i][1]] + distinctNotes[i][0];
 
-  let count = 0;
-  //--- traverses 2D array to determine the loudest frequency
-  for (let i = 0; i < energy.length; i++) {
-    for (let j = 0; j < energy[i].length; j++) {
-      let ampH = map(energy[i][j], 0, 255, 0, height);
-      if (energy[i][j] > energy[highAmpI][highAmpJ]) {
-        highAmpI = i;
-        highAmpJ = j;
-        highX = count;
-        highAmp = ampH;
-      }
-      //--- temp fix to c4 and b3 having the same energy
-      //--- basically will choose higher note if amplitude is the same between two adjacent notes in different octaves
-      if (highAmpI != i) {
-        if (energy[i][j] >= energy[highAmpI][highAmpJ]) {
-          highAmpI = i;
-          highAmpJ = j;
-          highX = count;
-          highAmp = ampH;
-        }
-      }
-      count++;
-    }
-  }
-
-  let loudestAmp = energy[highAmpI][highAmpJ];
-
-  let colorObject = Constants.noteColorObjects[Constants.notes[highAmpJ]];
-
-  textSize(64);
-  fill(colorObject[0], colorObject[1], colorObject[2], 255 - highAmpI * 15);
-
-  let noteName;
-  if (highAmp != 0) {
-    noteName = Constants.notes[highAmpJ] + highAmpI;
-    //text(noteName, 150, 150);
-    circle(w * highX - 50, (height - highAmp) * 1.25, highAmp / 3);
-  }
-
-  let backgroundNotes = '';
-
-  let peaks = ap.getPeaks(loudestAmp);
-
-  for (let k = 0; k < peaks.length; k++) {
-    backgroundNotes += Constants.notes[peaks[k].split('-')[1]] + peaks[k].split('-')[0] + ' ';
-
-    let note = Constants.notes[peaks[k].split('-')[1]] + peaks[k].split('-')[0];
+    let note = Constants.notes[distinctNotes[i][1]] + distinctNotes[i][0];
     let baseNote = note.substring(0, note.length - 1);
     let octave = note.substring(note.length - 1);
-    let j = Constants.noteColorOffset[baseNote];
-    let colorObject = Constants.noteColorObjects[Constants.notes[j]];
-    let amp = energy[octave][j];
-    fill(colorObject[0], colorObject[1], colorObject[2], 255 - octave * 15);
-    circle(w * (octave * 12 + j) - 50, (height - amp), amp / 3);
-  }
 
-  fill(255, 155, 0);
-  //text(backgroundNotes, 150, 200);
+    let colorObject = Constants.noteColorObjects[baseNote];
+    let j = Constants.noteColorOffset[baseNote];
+    let amp = energy[octave][j];
+
+    let h = map(amp, 0, 255, height, 0);
+    let r = map(amp, 0, 255, 0, 140);
+    fill(colorObject[0], colorObject[1], colorObject[2], 255 - octave * 15);
+    circle(w * (octave * 12 + j) - 50, h, r);
+  }
 
   //logs fft values if there is a song playing
   if (song.isPlaying()) {
-    logger.logPush(highAmpJ, noteName, energy, backgroundNotes, peaks);
+    //logger.logPush(highAmpJ, noteName, energy, backgroundNotes, peaks);
   }
 }
 

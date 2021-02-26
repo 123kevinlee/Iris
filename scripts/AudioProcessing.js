@@ -22,23 +22,44 @@ class AudioProcessing {
     return baseFreq * (Math.pow(2, octave));
   }
 
-  getPeaks(amp) {
+  getDistinctNotes() {
     let energy = this.energy;
-    //console.log(energy);
-    let peaks = [];
-    let filter = amp * .5;
+    let distinctNotes = [];
     for (let i = 0; i < energy.length; i++) {
       for (let j = 0; j < energy[i].length; j++) {
-        let before = j > 0 ? j - 1 : null;
-        let after = j < energy[i].length - 1 ? j + 1 : null;
-        if (before != null && after != null) {
-          if (energy[i][before] < energy[i][j] && energy[i][j] < energy[i][after] && energy[i][j] > filter) {
-            peaks.push(i + '-' + (j + 1));
-            //console.log(energy[i][j]);
+        let before = 0;
+        let after = 0;
+
+        if (j > 0) {
+          before = energy[i][j - 1];
+        } else if (i > 0) {
+          before = energy[i - 1][energy[i - 1].length - 1];
+        }
+
+        if (j < energy[i].length - 1) {
+          after = energy[i][j + 1]
+        } else if (i < energy.length - 1) {
+          after = energy[i + 1][0];
+        }
+
+        if (before < energy[i][j] && energy[i][j] > after) {
+          let amnt = 0;
+          let cap = 2;
+          for (let h = 0; h < distinctNotes.length; h++) {
+            if (j == distinctNotes[h][1]) {
+              amnt = Math.min(amnt + 1, cap);
+              if (amnt == cap && energy[i][j] > energy[distinctNotes[h][0]][distinctNotes[h][1]]) {
+                distinctNotes.splice(h, 1);
+                distinctNotes.push([i, j]);
+              }
+            }
+          }
+          if (amnt < cap) {
+            distinctNotes.push([i, j]);
           }
         }
       }
     }
-    return peaks;
+    return distinctNotes;
   }
 }
