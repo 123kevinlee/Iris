@@ -63,6 +63,7 @@ class AudioProcessing {
         }
       }
     }
+
     return distinctNotes;
   }
 }

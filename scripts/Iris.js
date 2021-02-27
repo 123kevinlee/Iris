@@ -20,6 +20,7 @@ let bins = 4096;
 //let peakThreshold = .001;
 let logger;
 let newSongLoading = false;
+let startingAmps = [];
 
 //variable for beat detection ellipse
 let ellipseWidth = 100;
@@ -117,6 +118,46 @@ function draw() {
   let energy = ap.analyzeNotes(); //get amplitudes of chromatic notes
   let distinctNotes = ap.getDistinctNotes(); //get distinct notes
 
+  //logic for setting initial amplitude for each note
+
+  //removes notes that are no longer distinct
+  if (startingAmps.length > 0 && distinctNotes.length > 0) {
+    for (let i = 0; i < startingAmps.length; i++) {
+      let containsNote = false;
+      for (let j = 0; j < distinctNotes.length; j++) {
+        if (startingAmps[i][0] == distinctNotes[j][0] && startingAmps[i][1] == distinctNotes[j][1]) {
+          containsNote = true;
+        }
+      }
+      if (!containsNote) {
+        startingAmps.splice(i, 1);
+      }
+    }
+  }
+
+  //adds notes that are newly distinct
+  if (distinctNotes.length > 0) {
+    for (let i = 0; i < distinctNotes.length; i++) {
+      let containsNote = false;
+      if (startingAmps.length > 0) {
+        for (let j = 0; j < startingAmps.length; j++) {
+          if (distinctNotes[i][0] == startingAmps[j][0] && distinctNotes[i][1] == startingAmps[j][1]) {
+            containsNote = true;
+          }
+        }
+      }
+
+      if (!containsNote) {
+        let o = distinctNotes[i][0];
+        let n = distinctNotes[i][1];
+        let e = energy[o][n];
+        startingAmps.push([o, n, e]);
+      }
+    }
+  }
+  console.log(startingAmps);
+
+
   let distinctNotesS = '';
   let w = width / (energy.length * energy[0].length); //get note position x intervals
   for (let i = 0; i < distinctNotes.length; i++) {
@@ -133,7 +174,15 @@ function draw() {
     let amp = energy[octave][j];
 
     //map position variables to position
-    let h = map(amp, 0, 255, height, 0);
+
+    //find initial amplitude value
+    let h = 0;
+    for (let c = 0; c < startingAmps.length; c++) {
+      if (distinctNotes[i][0] == startingAmps[c][0] && distinctNotes[i][1] == startingAmps[c][1]) {
+        h = map(startingAmps[c][2], 0, 255, height, 0);
+      }
+    }
+    //let h = map(amp, 0, 255, height, 0); --- old correlation with amp and y-axis
     let r = map(amp, 0, 255, 0, 140);
 
     //create circle for note
