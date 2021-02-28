@@ -155,8 +155,6 @@ function draw() {
       }
     }
   }
-  console.log(startingAmps);
-
 
   let distinctNotesS = '';
   let w = width / (energy.length * energy[0].length); //get note position x intervals
