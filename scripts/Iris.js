@@ -281,7 +281,7 @@ function songSelectDropdowned() {
     case 'Chopin Fantaisie Impromptu':
       songFile = 'songs/chopinfantasie.mp3';
       break;
-    case 'Harry Potter':
+    case 'Harry Potter Theme':
       songFile = 'songs/hp.mp3';
       break;
     case 'Bflat Note':
