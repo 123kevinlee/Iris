@@ -1,3 +1,5 @@
+//not using statics because safari does not currently support it
+
 class Constants {}
 
 Constants.noteFrequencies = {
@@ -17,6 +19,7 @@ Constants.noteFrequencies = {
 
 Constants.noteKeys = Object.keys(Constants.noteFrequencies);
 
+//Direct sound frequency to rgb conversion
 Constants.originalNoteColorObjects = {
   'c': [254, 254, 9],
   'c♯': [156, 250, 16],
@@ -32,6 +35,7 @@ Constants.originalNoteColorObjects = {
   'b': [241, 103, 28]
 }
 
+//editable color assocations
 Constants.noteColorObjects = {
   'c': [254, 254, 9],
   'c♯': [156, 250, 16],

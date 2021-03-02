@@ -55,9 +55,9 @@ function setup() {
   songSelectDropdown = createSelect();
   songSelectDropdown.position(50, height - 20);
   songSelectDropdown.option('Sir Duke by Stevie Wonder');
-  songSelectDropdown.option('Chopin Op9 No1');
+  songSelectDropdown.option('Chopin Nocturne Op9 No1');
   //songSelectDropdown.option('Chopin Fantaisie Impromptu');
-  songSelectDropdown.option('Harry Potter');
+  songSelectDropdown.option('Harry Potter Theme');
   songSelectDropdown.option('La La Land: City of Stars');
   songSelectDropdown.option('La La Land: Mia and Sebestian\'s Theme');
   songSelectDropdown.option('Believer by Imagine Dragons');
