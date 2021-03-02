@@ -13,6 +13,7 @@ let song;
 let fft;
 let peakDetect;
 let mic;
+let fontRegular;
 
 let songFile = 'songs/sirduke.mp3';
 let smoothingValue = .9;
@@ -28,13 +29,15 @@ let ellipseWidth = 100;
 function preload() {
   song = loadSound(songFile);
   song.amp(1);
+
+  fontRegular = loadFont('font.ttf');
 }
 
 function setup() {
   //instantiate logging object
   logger = new Logger(songFile, bins, smoothingValue);
 
-  createCanvas(windowWidth - 50, windowHeight - 50);
+  createCanvas(windowWidth - 50, windowHeight - 50, WEBGL);
 
   //creates the color pickers
   for (let i = 0; i < 12; i++) {
@@ -94,14 +97,17 @@ function draw() {
   noStroke();
   background(255, 255, 255);
 
-  textSize(14);
-  fill('black');
-  text('Song:', 10, height - 6);
+  textFont(fontRegular);
+  orbitControl();
+
+  // textSize(14);
+  // fill('black');
+  // text('Song:', 10, height - 6);
 
   //Displays note names for color pickers
-  for (let i = 0; i < Constants.notes.length; i++) {
-    text(Constants.notes[i] + ': ', width * .01, height * .1 + (i * 50) + 18)
-  }
+  // for (let i = 0; i < Constants.notes.length; i++) {
+  //   text(Constants.notes[i] + ': ', width * .01, height * .1 + (i * 50) + 18)
+  // }
 
   //waits until song is loaded before allowing interaction
   if (song.isLoaded() && newSongLoading) {
@@ -191,8 +197,11 @@ function draw() {
     //let r = map(amp, 0, 255, 0, 140); //linear relationship for amp -> radius
 
     //create circle for note
-    fill(colorObject[0], colorObject[1], colorObject[2], 255 - octave * 15);
-    circle(w * (octave * 12 + j) - 50, h, er);
+    fill(colorObject[0], colorObject[1], colorObject[2]);
+    push();
+    translate(w * (octave * 12 + j) - 50 - width / 2, h - height / 2, 0);
+    sphere(er);
+    pop();
   }
 
   //logs fft values if there is a song playing
