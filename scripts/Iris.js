@@ -192,7 +192,7 @@ function draw() {
 
     //create sphere for note
     push();
-    translate(w * (octave * 12 + j) - 50 - width / 2, h - height / 2.2, r);
+    translate(w * (octave * 12 + j) - 50 - width / 2, h - height / 2, r);
     ambientLight(200, 200, 200);
     directionalLight(80, 80, 80, width / 1.5, height / 1.5, -10000);
     specularMaterial(colorObject[0], colorObject[1], colorObject[2], 255);
