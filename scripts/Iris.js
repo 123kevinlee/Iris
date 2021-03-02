@@ -61,6 +61,7 @@ function setup() {
   songSelectDropdown.option('La La Land: City of Stars');
   songSelectDropdown.option('La La Land: Mia and Sebestian\'s Theme');
   songSelectDropdown.option('Believer by Imagine Dragons');
+  songSelectDropdown.option('Experience by Ludovico Einaudi');
   songSelectDropdown.option('Bflat Note');
   songSelectDropdown.selected('Sir Duke by Stevie Wonder');
   songSelectDropdown.changed(songSelectDropdowned);
@@ -292,6 +293,9 @@ function songSelectDropdowned() {
       break;
     case 'Believer by Imagine Dragons':
       songFile = 'songs/believer.mp3';
+      break;
+    case 'Experience by Ludovico Einaudi':
+      songFile = 'songs/experience.mp3';
       break;
     default:
       break;
