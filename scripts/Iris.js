@@ -15,16 +15,12 @@ let peakDetect;
 let mic;
 let fontRegular;
 
-let songFile = 'songs/sirduke.mp3';
+let songFile = 'songs/experience.mp3';
 let smoothingValue = .9;
 let bins = 4096;
-//let peakThreshold = .001;
 let logger;
 let newSongLoading = false;
 let startingAmps = [];
-
-//variable for beat detection ellipse
-let ellipseWidth = 100;
 
 function preload() {
   song = loadSound(songFile);
@@ -40,19 +36,19 @@ function setup() {
   createCanvas(windowWidth - 50, windowHeight - 50, WEBGL);
 
   //creates the color pickers
-  for (let i = 0; i < 12; i++) {
-    let colorArr = Constants.originalNoteColorObjects[Constants.notes[i]];
-    let colorObj = color(colorArr[0], colorArr[1], colorArr[2]);
-    let colorPicker = createColorPicker(colorObj);
-    colorPicker.position(width * .023, height * .1 + (i * 50));
-    colorPicker.input(changeColorAssocation);
-    colorPickers.push(colorPicker);
-  }
+  // for (let i = 0; i < 12; i++) {
+  //   let colorArr = Constants.originalNoteColorObjects[Constants.notes[i]];
+  //   let colorObj = color(colorArr[0], colorArr[1], colorArr[2]);
+  //   let colorPicker = createColorPicker(colorObj);
+  //   colorPicker.position(width * .023, height * .1 + (i * 50));
+  //   colorPicker.input(changeColorAssocation);
+  //   colorPickers.push(colorPicker);
+  // }
 
   //creates Reset Colors button
-  resetColorButton = createButton('Reset Colors');
-  resetColorButton.mousePressed(resetColors);
-  resetColorButton.position(width * .01, height * .1 + (12 * 50));
+  // resetColorButton = createButton('Reset Colors');
+  // resetColorButton.mousePressed(resetColors);
+  // resetColorButton.position(width * .01, height * .1 + (12 * 50));
 
   //creates song selection dropodown
   songSelectDropdown = createSelect();
@@ -66,7 +62,7 @@ function setup() {
   songSelectDropdown.option('Believer by Imagine Dragons');
   songSelectDropdown.option('Experience by Ludovico Einaudi');
   songSelectDropdown.option('Bflat Note');
-  songSelectDropdown.selected('Sir Duke by Stevie Wonder');
+  songSelectDropdown.selected('Experience by Ludovico Einaudi');
   songSelectDropdown.changed(songSelectDropdowned);
 
   //creates play/pause button
@@ -75,12 +71,12 @@ function setup() {
   togglePlayButton.mousePressed(togglePlayButtonSound);
 
   //creates download log button
-  saveButton = createButton('download log');
-  saveButton.mousePressed(() => logger.createLog());
+  // saveButton = createButton('download log');
+  // saveButton.mousePressed(() => logger.createLog());
 
   //creates reset log button
-  resetLogButton = createButton('reset log');
-  resetLogButton.mousePressed(() => logger.resetLog());
+  // resetLogButton = createButton('reset log');
+  // resetLogButton.mousePressed(() => logger.resetLog());
 
   //initialize FFT object
   fft = new p5.FFT(smoothingValue, bins);
@@ -95,9 +91,7 @@ function setup() {
 
 function draw() {
   noStroke();
-  background(255, 255, 255);
-
-  textFont(fontRegular);
+  background(10, 11, 16);
   orbitControl();
 
   // textSize(14);
@@ -163,8 +157,9 @@ function draw() {
     }
   }
 
-  let distinctNotesS = '';
-  let w = width / (energy.length * energy[0].length); //get note position x intervals
+  let distinctNotesS = ''; //debug string
+
+  let w = width / (energy.length * energy[0].length); //get note position intervals
   for (let i = 0; i < distinctNotes.length; i++) {
     distinctNotesS += Constants.notes[distinctNotes[i][1]] + distinctNotes[i][0];
 
@@ -187,19 +182,20 @@ function draw() {
         h = map(startingAmps[c][2], 0, 255, height, 0);
       }
     }
-    //let h = map(amp, 0, 255, height, 0); --- old correlation with amp and y-axis
 
-    //piecewise amp -> radius relationship
+    //cuberoot amp -> radius relationship
     let amprFunction = ampToRadius(amp);
     let amprFunctionLimit = ampToRadius(255);
-    let er = map(amprFunction, 0, amprFunctionLimit, 0, 160);
+    let er = map(amprFunction, 0, amprFunctionLimit, 0, 40);
 
-    //let r = map(amp, 0, 255, 0, 140); //linear relationship for amp -> radius
+    let r = map(amp, 0, 255, -600, 600); //linear relationship for amp -> radius
 
-    //create circle for note
-    fill(colorObject[0], colorObject[1], colorObject[2]);
+    //create sphere for note
     push();
-    translate(w * (octave * 12 + j) - 50 - width / 2, h - height / 2, 0);
+    translate(w * (octave * 12 + j) - 50 - width / 2, h - height / 2.2, r);
+    ambientLight(200, 200, 200);
+    directionalLight(80, 80, 80, width / 1.5, height / 1.5, -10000);
+    specularMaterial(colorObject[0], colorObject[1], colorObject[2], 255);
     sphere(er);
     pop();
   }
