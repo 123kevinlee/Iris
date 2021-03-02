@@ -183,11 +183,11 @@ function draw() {
     //let h = map(amp, 0, 255, height, 0); --- old correlation with amp and y-axis
 
     //piecewise amp -> radius relationship
-    let expGrowth = ampToRadius(amp);
-    let expGrowthLimit = ampToRadius(255);
-    let er = map(expGrowth, 0, expGrowthLimit, 0, 160);
+    let amprFunction = ampToRadius(amp);
+    let amprFunctionLimit = ampToRadius(255);
+    let er = map(amprFunction, 0, amprFunctionLimit, 0, 160);
 
-    let r = map(amp, 0, 255, 0, 140);
+    //let r = map(amp, 0, 255, 0, 140); //linear relationship for amp -> radius
 
     //create circle for note
     fill(colorObject[0], colorObject[1], colorObject[2], 255 - octave * 15);
@@ -203,7 +203,17 @@ function draw() {
 //Calculates circle radius relating to amplitude using a predetermined 
 //piecewise function where lower amplitudes gain radius slower than higher
 function ampToRadius(amp) {
-  return amp < 150 ? 1 * amp : 2 * amp - 150;
+  let r = Math.round(20 * negSquareRoot(amp - 175, 1 / 3) + 113); //https://www.desmos.com/calculator/hle1uqlc99
+  return r;
+  //return amp < 150 ? 1 * amp : 2 * amp - 150; //piecewise function
+}
+
+//function that fixes javascript bug that returns NaN when taking the power of a negative 
+function negSquareRoot(x, y) {
+  if (x > 0) {
+    return Math.pow(x, y)
+  }
+  return -1 * Math.pow(-x, y)
 }
 
 //--- togglePlayButton sound on and off
