@@ -10,7 +10,6 @@ let songSelectDropdown;
 let resetColorButton;
 let colorPickers = [];
 let songLabel;
-//let colorPickerLabels = [];
 
 //p5 objects
 let song;
@@ -30,8 +29,6 @@ let usingMic = false;
 function preload() {
   song = loadSound(songFile);
   song.amp(1);
-
-  fontRegular = loadFont('assets/font.ttf');
 }
 
 function setup() {
@@ -49,7 +46,7 @@ function setup() {
     colorPicker.input(changeColorAssocation);
     colorPickers.push(colorPicker);
 
-    //creates the label
+    //creates the note label for colorpickers
     let colorPickerLabel = createElement('p', Constants.notes[i] + ': ');
     colorPickerLabel.position(width * .01, height * .1 + (i * 50) - 14);
   }
@@ -80,7 +77,7 @@ function setup() {
   input = createFileInput(handleFile);
   input.position(320, height - 20);
 
-
+  //creates song selector label
   songLabel = createElement('p', 'Song:');
   songLabel.position(10, height - 37);
 
@@ -100,16 +97,14 @@ function setup() {
   //initialize FFT object
   fft = new p5.FFT(smoothingValue, bins);
 
-  //mic stuff
+  //microphone setup
   mic = new p5.AudioIn();
-  //mic.start();
-  //fft.setInput(mic);
 }
 
 function draw() {
   noStroke();
   background(12, 15, 23);
-  orbitControl();
+  orbitControl(); //allows for mouse control of movement in 3d plane
 
   //waits until song is loaded before allowing interaction
   if (song.isLoaded() && newSongLoading) {
@@ -126,6 +121,7 @@ function draw() {
   let ap = new AudioProcessing(fft);
   let energy = ap.analyzeNotes(); //get amplitudes of chromatic notes
   let distinctNotes = ap.getDistinctNotes(); //get distinct notes
+
 
   //logic for setting initial amplitude for each note
 
@@ -165,7 +161,7 @@ function draw() {
     }
   }
 
-  let distinctNotesS = ''; //debug string
+  let distinctNotesS = '';
 
   let w = width / (energy.length * energy[0].length); //get note position intervals
   for (let i = 0; i < distinctNotes.length; i++) {
@@ -202,14 +198,14 @@ function draw() {
     push();
     //lighting settings
     ambientLight(255 - octave * 15);
-    let brightness = amp * 2 / 3;
+    let brightness = amp / 2;
     directionalLight(brightness, brightness, brightness, 0, 0, -10000);
     specularMaterial(colorObject[0], colorObject[1], colorObject[2]);
 
     let wiggle = Math.random(-10, 10);
 
     translate(w * (octave * 12 + j) - 50 - width / 2 + wiggle, h - height / 2 + wiggle, r);
-    shininess(10);
+    shininess(1);
     sphere(er);
     pop();
   }
@@ -218,22 +214,6 @@ function draw() {
   if (song.isPlaying()) {
     //logger.logPush(highAmpJ, noteName, energy, backgroundNotes, peaks);
   }
-}
-
-//Calculates circle radius relating to amplitude using a predetermined 
-//piecewise function where lower amplitudes gain radius slower than higher
-function ampToRadius(amp) {
-  let r = Math.round(20 * negSquareRoot(amp - 175, 1 / 3) + 113); //https://www.desmos.com/calculator/hle1uqlc99
-  return r;
-  //return amp < 150 ? 1 * amp : 2 * amp - 150; //piecewise function
-}
-
-//function that fixes javascript bug that returns NaN when taking the power of a negative 
-function negSquareRoot(x, y) {
-  if (x > 0) {
-    return Math.pow(x, y)
-  }
-  return -1 * Math.pow(-x, y)
 }
 
 //--- togglePlayButton sound on and off
@@ -274,14 +254,6 @@ function changeColorAssocation() {
   for (let i = 0; i < colorPickers.length; i++) {
     Constants.noteColorObjects[Constants.notes[i]] = colorToRGBArray(colorPickers[i].color());
   }
-}
-
-//converts color object to rgb int array
-function colorToRGBArray(color) {
-  let colorS = color.toString();
-  colorS = colorS.substring(colorS.indexOf('(') + 1, colorS.length - 3);
-  let rgbArray = colorS.split(',').map(Number);;
-  return rgbArray;
 }
 
 //--- Switch songs
@@ -358,4 +330,27 @@ function handleFile(file) {
   } else {
     alert('Please select an audio file!');
   }
+}
+
+//Calculates circle radius using a predetermined function
+function ampToRadius(amp) {
+  let r = Math.round(20 * negSquareRoot(amp - 175, 1 / 3) + 113); //https://www.desmos.com/calculator/hle1uqlc99
+  return r;
+  //return amp < 150 ? 1 * amp : 2 * amp - 150; //piecewise function
+}
+
+//function that fixes javascript bug that returns NaN when taking the power of a negative 
+function negSquareRoot(x, y) {
+  if (x > 0) {
+    return Math.pow(x, y)
+  }
+  return -1 * Math.pow(-x, y)
+}
+
+//converts color object to rgb int array
+function colorToRGBArray(color) {
+  let colorS = color.toString();
+  colorS = colorS.substring(colorS.indexOf('(') + 1, colorS.length - 3);
+  let rgbArray = colorS.split(',').map(Number);;
+  return rgbArray;
 }
