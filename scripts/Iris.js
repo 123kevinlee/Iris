@@ -26,7 +26,7 @@ function preload() {
   song = loadSound(songFile);
   song.amp(1);
 
-  fontRegular = loadFont('font.ttf');
+  fontRegular = loadFont('assets/font.ttf');
 }
 
 function setup() {
@@ -91,7 +91,7 @@ function setup() {
 
 function draw() {
   noStroke();
-  background(10, 11, 16);
+  background(12, 15, 23);
   orbitControl();
 
   // textSize(14);
@@ -192,10 +192,16 @@ function draw() {
 
     //create sphere for note
     push();
-    translate(w * (octave * 12 + j) - 50 - width / 2, h - height / 2, r);
-    ambientLight(200, 200, 200);
-    directionalLight(80, 80, 80, width / 1.5, height / 1.5, -10000);
-    specularMaterial(colorObject[0], colorObject[1], colorObject[2], 255);
+    //lighting settings
+    ambientLight(255 - octave * 15);
+    let brightness = amp * 2 / 3;
+    directionalLight(brightness, brightness, brightness, 0, 0, -10000);
+    specularMaterial(colorObject[0], colorObject[1], colorObject[2]);
+
+    let wiggle = Math.random(-10, 10);
+
+    translate(w * (octave * 12 + j) - 50 - width / 2 + wiggle, h - height / 2 + wiggle, r);
+    shininess(10);
     sphere(er);
     pop();
   }
