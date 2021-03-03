@@ -270,7 +270,7 @@ function songSelectDropdowned() {
   let item = songSelectDropdown.value();
   song.stop();
   switch (item) {
-    case 'Chopin Op9 No1':
+    case 'Chopin Nocturne Op9 No1':
       songFile = 'songs/chopinop9n1.mp3';
       break;
     case 'Chopin Fantaisie Impromptu':
