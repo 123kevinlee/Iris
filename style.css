@@ -1,7 +1,12 @@
 body {
     padding: 0;
     margin: 0;
-    background-color: black;
+    background-color: rgb(12, 15, 23);
+}
+
+p {
+    color: rgb(218, 151, 218);
+    font-size: 16px;
 }
 
 input[type="color"] {
@@ -10,7 +15,7 @@ input[type="color"] {
     height: 25px;
     border: none;
     -webkit-appearance: none;
-    background-color: white;
+    background-color: rgb(12, 15, 23);
 }
 
 input[type="color"]::-webkit-color-swatch-wrapper {

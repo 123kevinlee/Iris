@@ -7,6 +7,8 @@ let resetLogButton;
 let songSelectDropdown;
 let resetColorButton;
 let colorPickers = [];
+let songLabel;
+//let colorPickerLabels = [];
 
 //p5 objects
 let song;
@@ -36,19 +38,23 @@ function setup() {
   createCanvas(windowWidth - 50, windowHeight - 50, WEBGL);
 
   //creates the color pickers
-  // for (let i = 0; i < 12; i++) {
-  //   let colorArr = Constants.originalNoteColorObjects[Constants.notes[i]];
-  //   let colorObj = color(colorArr[0], colorArr[1], colorArr[2]);
-  //   let colorPicker = createColorPicker(colorObj);
-  //   colorPicker.position(width * .023, height * .1 + (i * 50));
-  //   colorPicker.input(changeColorAssocation);
-  //   colorPickers.push(colorPicker);
-  // }
+  for (let i = 0; i < 12; i++) {
+    let colorArr = Constants.originalNoteColorObjects[Constants.notes[i]];
+    let colorObj = color(colorArr[0], colorArr[1], colorArr[2]);
+    let colorPicker = createColorPicker(colorObj);
+    colorPicker.position(width * .023, height * .1 + (i * 50));
+    colorPicker.input(changeColorAssocation);
+    colorPickers.push(colorPicker);
+
+    //creates the label
+    let colorPickerLabel = createElement('p', Constants.notes[i] + ': ');
+    colorPickerLabel.position(width * .01, height * .1 + (i * 50) - 14);
+  }
 
   //creates Reset Colors button
-  // resetColorButton = createButton('Reset Colors');
-  // resetColorButton.mousePressed(resetColors);
-  // resetColorButton.position(width * .01, height * .1 + (12 * 50));
+  resetColorButton = createButton('Reset Colors');
+  resetColorButton.mousePressed(resetColors);
+  resetColorButton.position(width * .01, height * .1 + (12 * 50));
 
   //creates song selection dropodown
   songSelectDropdown = createSelect();
@@ -65,23 +71,24 @@ function setup() {
   songSelectDropdown.selected('Experience by Ludovico Einaudi');
   songSelectDropdown.changed(songSelectDropdowned);
 
+  songLabel = createElement('p', 'Song:');
+  songLabel.position(10, height - 37);
+
   //creates play/pause button
   togglePlayButton = createButton('togglePlayButton');
   togglePlayButton.html('play');
   togglePlayButton.mousePressed(togglePlayButtonSound);
 
   //creates download log button
-  // saveButton = createButton('download log');
-  // saveButton.mousePressed(() => logger.createLog());
+  saveButton = createButton('download log');
+  saveButton.mousePressed(() => logger.createLog());
 
   //creates reset log button
-  // resetLogButton = createButton('reset log');
-  // resetLogButton.mousePressed(() => logger.resetLog());
+  resetLogButton = createButton('reset log');
+  resetLogButton.mousePressed(() => logger.resetLog());
 
   //initialize FFT object
   fft = new p5.FFT(smoothingValue, bins);
-
-  //peakDetect = new p5.PeakDetect(20, 20000, peakThreshold, 20);
 
   //mic stuff
   //mic = new p5.AudioIn();
@@ -93,15 +100,6 @@ function draw() {
   noStroke();
   background(12, 15, 23);
   orbitControl();
-
-  // textSize(14);
-  // fill('black');
-  // text('Song:', 10, height - 6);
-
-  //Displays note names for color pickers
-  // for (let i = 0; i < Constants.notes.length; i++) {
-  //   text(Constants.notes[i] + ': ', width * .01, height * .1 + (i * 50) + 18)
-  // }
 
   //waits until song is loaded before allowing interaction
   if (song.isLoaded() && newSongLoading) {
