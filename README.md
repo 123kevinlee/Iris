@@ -1,6 +1,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 # Iris
-![Image](https://i.imgur.com/SnJY40i.png)
+![Image](https://i.imgur.com/yKUWvbR.jpg)
 
 ## About
 **Iris** is a program that was developed during a year-long research project on visualizing music through audio signal analysis. The project was inspired by the condition of Chromesthesia, where people percieve flashes of color when hearing sound. Understanding how chromathesists perceive sound as color is beneficial for exploring how people without the condition can still find correlation between sound and sight. Although there have been simulations and videos created that employ both senses, few have been accurate to the real-life descriptions of Chomesthesists. 
