@@ -4,6 +4,8 @@
 let togglePlayButton;
 let saveButton;
 let resetLogButton;
+let fileInput;
+let inputFile;
 let songSelectDropdown;
 let resetColorButton;
 let colorPickers = [];
@@ -23,6 +25,7 @@ let bins = 4096;
 let logger;
 let newSongLoading = false;
 let startingAmps = [];
+let usingMic = false;
 
 function preload() {
   song = loadSound(songFile);
@@ -59,17 +62,24 @@ function setup() {
   //creates song selection dropodown
   songSelectDropdown = createSelect();
   songSelectDropdown.position(50, height - 20);
-  songSelectDropdown.option('Sir Duke by Stevie Wonder');
-  songSelectDropdown.option('Chopin Nocturne Op9 No1');
-  //songSelectDropdown.option('Chopin Fantaisie Impromptu');
-  songSelectDropdown.option('Harry Potter Theme');
-  songSelectDropdown.option('La La Land: City of Stars');
-  songSelectDropdown.option('La La Land: Mia and Sebestian\'s Theme');
-  songSelectDropdown.option('Believer by Imagine Dragons');
   songSelectDropdown.option('Experience by Ludovico Einaudi');
+  songSelectDropdown.option('La La Land: Mia and Sebestian\'s Theme');
+  songSelectDropdown.option('Yesterday by The Beatles');
+  songSelectDropdown.option('Chopin Nocturne Op9 No1');
+  songSelectDropdown.option('Sir Duke by Stevie Wonder');
+  songSelectDropdown.option('Believer by Imagine Dragons');
   songSelectDropdown.option('Bflat Note');
+  songSelectDropdown.option('Custom');
+  songSelectDropdown.option('Mic Input');
+  //songSelectDropdown.option('Chopin Fantaisie Impromptu');
+  //songSelectDropdown.option('Harry Potter Theme');
+  //songSelectDropdown.option('La La Land: City of Stars');
   songSelectDropdown.selected('Experience by Ludovico Einaudi');
   songSelectDropdown.changed(songSelectDropdowned);
+
+  input = createFileInput(handleFile);
+  input.position(320, height - 20);
+
 
   songLabel = createElement('p', 'Song:');
   songLabel.position(10, height - 37);
@@ -91,7 +101,7 @@ function setup() {
   fft = new p5.FFT(smoothingValue, bins);
 
   //mic stuff
-  //mic = new p5.AudioIn();
+  mic = new p5.AudioIn();
   //mic.start();
   //fft.setInput(mic);
 }
@@ -278,6 +288,14 @@ function colorToRGBArray(color) {
 function songSelectDropdowned() {
   let item = songSelectDropdown.value();
   song.stop();
+
+  if (usingMic) {
+    mic.stop();
+    fft.setInput();
+    usingMic = false;
+  }
+
+
   switch (item) {
     case 'Chopin Nocturne Op9 No1':
       songFile = 'songs/chopinop9n1.mp3';
@@ -306,7 +324,19 @@ function songSelectDropdowned() {
     case 'Experience by Ludovico Einaudi':
       songFile = 'songs/experience.mp3';
       break;
+    case 'Yesterday by The Beatles':
+      songFile = 'songs/yesterday.mp3';
+      break;
+    case 'Custom':
+      songFile = inputFile;
+      break;
+    case 'Mic Input':
+      usingMic = true;
+      mic.start();
+      fft.setInput(mic);
+      break;
     default:
+      songFile = 'songs/experience.mp3';
       break;
   }
 
@@ -318,4 +348,14 @@ function songSelectDropdowned() {
   togglePlayButton.attribute('disabled', '');
   togglePlayButton.html('loading...');
   newSongLoading = true;
+}
+
+function handleFile(file) {
+  if (file.type == 'audio') {
+    inputFile = file;
+    songSelectDropdown.selected('Custom');
+    songSelectDropdowned();
+  } else {
+    alert('Please select an audio file!');
+  }
 }

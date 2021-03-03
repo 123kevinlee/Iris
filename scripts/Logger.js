@@ -16,7 +16,12 @@ class Logger {
   }
 
   logSetup() {
-    this.logBody += 'File: ' + this.songFile.substring(this.songFile.indexOf('/') + 1, this.songFile.indexOf('.')) + '\n';
+    try {
+      this.logBody += 'File: ' + this.songFile.substring(this.songFile.indexOf('/') + 1, this.songFile.indexOf('.')) + '\n';
+    } catch (error) {
+      this.logBody += 'File: ' + this.songFile + '\n';
+    }
+
     this.logBody += 'Bin Size: ' + this.bins + '\n';
     this.logBody += 'Smoothing Value: ' + this.smoothingValue + '\n\n';
   }
