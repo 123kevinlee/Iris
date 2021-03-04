@@ -32,7 +32,7 @@ class Logger {
   }
 
   //adds new log entry
-  logPush(noteIndex, note, energy, backgroundNotes, peaks) {
+  logPush(energy, peaks) {
     let date = new Date();
     let milliseconds = date.getMilliseconds();
     let seconds = date.getSeconds();
@@ -46,8 +46,7 @@ class Logger {
     } else if (milliseconds > this.previousTime && milliseconds - this.previousTime > 125) {
       this.previousTime = milliseconds;
 
-      this.logBody += `${timestamp}: ${note}[${noteIndex}]\n`;
-      this.logBody += `Background: ${backgroundNotes}\n`;
+      this.logBody += `${timestamp}\n`;
       this.logBody += `Peaks: ${peaks}\n`;
       for (let i = 0; i < energy.length; i++) {
         this.logBody += `    ${i} - ${energy[i].toString()}\n`;
@@ -57,8 +56,7 @@ class Logger {
     } else if (milliseconds < this.previousTime && (1000 - this.previousTime) + milliseconds > 125) {
       this.previousTime = milliseconds;
 
-      this.logBody += `${timestamp}: ${note}[${noteIndex}]\n`;
-      this.logBody += `Background: ${backgroundNotes}\n`;
+      this.logBody += `${timestamp}\n`;
       this.logBody += `Peaks: ${peaks}\n`;
       for (let i = 0; i < energy.length; i++) {
         this.logBody += `    ${i} - ${energy[i].toString()}\n`;

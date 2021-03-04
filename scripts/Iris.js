@@ -165,7 +165,7 @@ function draw() {
 
   let w = width / (energy.length * energy[0].length); //get note position intervals
   for (let i = 0; i < distinctNotes.length; i++) {
-    distinctNotesS += Constants.notes[distinctNotes[i][1]] + distinctNotes[i][0];
+    distinctNotesS += Constants.notes[distinctNotes[i][1]] + distinctNotes[i][0] + ', ';
 
     //get note name
     let note = Constants.notes[distinctNotes[i][1]] + distinctNotes[i][0];
@@ -212,7 +212,7 @@ function draw() {
 
   //logs fft values if there is a song playing
   if (song.isPlaying()) {
-    //logger.logPush(highAmpJ, noteName, energy, backgroundNotes, peaks);
+    logger.logPush(energy, distinctNotesS);
   }
 }
 
