@@ -212,6 +212,7 @@ function draw() {
 
   //logs fft values if there is a song playing
   if (song.isPlaying()) {
+    console.log(song.currentTime());
     logger.logPush(energy, distinctNotesS);
   }
 }
