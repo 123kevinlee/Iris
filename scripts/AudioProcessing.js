@@ -32,7 +32,11 @@ class AudioProcessing {
       for (let j = 0; j < energy[i].length; j++) {
         let before = 0;
         let after = 0;
+        let before1 = 0;
+        let after1 = 0;
 
+
+        //notes directly surrounding
         if (j > 0) {
           before = energy[i][j - 1];
         } else if (i > 0) {
@@ -45,7 +49,20 @@ class AudioProcessing {
           after = energy[i + 1][0];
         }
 
-        if (before < energy[i][j] && energy[i][j] > after) {
+        //notes one away
+        if (j > 1) {
+          before1 = energy[i][j - 2];
+        } else if (i > 0) {
+          before1 = energy[i - 1][energy[i - 1].length - 2];
+        }
+
+        if (j < energy[i].length - 2) {
+          after = energy[i][j + 2]
+        } else if (i < energy.length - 1) {
+          after = energy[i + 1][1];
+        }
+
+        if (before < energy[i][j] && before1 < energy[i][j] && energy[i][j] > after && energy[i][j] > after1) {
           let amnt = 0;
           let cap = 2;
           for (let h = 0; h < distinctNotes.length; h++) {
