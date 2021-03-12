@@ -2,6 +2,7 @@ class AudioProcessing {
   constructor(fft) {
     this.fft = fft;
     this.energy = [];
+    this.baseNotes = new Set();
   }
 
   //returns array of amplitudes for chromatic notes
@@ -28,6 +29,8 @@ class AudioProcessing {
   getDistinctNotes() {
     let energy = this.energy;
     let distinctNotes = [];
+    this.baseNotes.clear();
+
     for (let i = 0; i < energy.length; i++) {
       for (let j = 0; j < energy[i].length; j++) {
         let before = 0;
@@ -76,6 +79,7 @@ class AudioProcessing {
           }
           if (amnt < cap) {
             distinctNotes.push([i, j]);
+            this.baseNotes.add(Constants.notes[j]);
           }
         }
       }
