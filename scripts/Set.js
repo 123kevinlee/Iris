@@ -15,18 +15,10 @@ class Set {
         this.set = [];
     }
     contains() {
-        if (this.set.includes(element)) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.set.include(element) ? true : false;
     }
     isEmpty() {
-        if (this.set.length == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.set.length == 0 ? true : false;
     }
     size() {
         return this.set.length;
