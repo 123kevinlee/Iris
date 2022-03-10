@@ -8,6 +8,7 @@
 The goal of the project was to create a program that utilizes audio signal analysis to authentically convey music through colors, shapes, and animation.
 
 [Visit Iris](https://123kevinlee.github.io/Iris/)
+
 [Link to Research Article](https://drive.google.com/file/d/17P8NdKCK8f0ajmWQbVXJ86V5E4KXuKiP/view?usp=sharing)
 
 ## Built With
